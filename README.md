@@ -1,11 +1,12 @@
 # Document Request and Generation System
 
-A Laravel-based web application for submitting document requests and generating requested documents.
+A Laravel-based web application for submitting document requests and generating requested documents.  
+
 Laboratory 1 - ESTABLISH THE LARAVEL PROJECT AND MAP ITS DEVOPS WORKFLOW
 
 ## Student Information
 
-- - Charisse G. Guray
+- - Samantha Bianca Germina
 - - Charisse G. Guray
 - **Course/Year/Section:** BSIT 4-3
 
