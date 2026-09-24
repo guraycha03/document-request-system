@@ -5,8 +5,8 @@ Laboratory 1 - ESTABLISH THE LARAVEL PROJECT AND MAP ITS DEVOPS WORKFLOW
 
 ## Student Information
 
-- **•** Charisse G. Guray
-- - **•** Charisse G. Guray
+- - Charisse G. Guray
+- - Charisse G. Guray
 - **Course/Year/Section:** BSIT 4-3
 
 ## Technologies Used
