@@ -2,7 +2,8 @@
 
 A Laravel-based web application for submitting document requests and generating requested documents.
 
-Laboratory 1 — ESTABLISH THE LARAVEL PROJECT AND MAP ITS DEVOPS WORKFLOW
+Laboratory 1 — ESTABLISH THE LARAVEL PROJECT AND MAP ITS DEVOPS WORKFLOW  
+Laboratory 2 — PLAN AND IMPLEMENT THE REQUEST DATA MODEL
 
 ## Screenshots
 
@@ -15,6 +16,26 @@ Laboratory 1 — ESTABLISH THE LARAVEL PROJECT AND MAP ITS DEVOPS WORKFLOW
 - Samantha Bianca Germina
 - Charisse G. Guray
 - **Course/Year/Section:** BSIT 4-3
+
+## User Stories (Laboratory 2)
+
+1. **Requester:** As a requester, I want to submit a document request online so that I can formally request items or services without needing to visit the office physically.
+2. **Staff Reviewer:** As a staff reviewer, I want to view the list of pending document requests so that I can process, approve, or reject them in a timely manner.
+3. **Record Keeper:** As a record keeper, I want all document request records stored with accurate creation and update timestamps so that I can maintain audit trails and historical reports.
+
+## Data Schema (`requests` Table)
+
+| Field Name | Data Type | Constraints | Purpose |
+| :--- | :--- | :--- | :--- |
+| `id` | Big Integer | Primary Key, Auto-increment | Unique identifier for each request |
+| `requester_name` | String (100) | Required (NOT NULL) | Full name of the requester |
+| `requester_email` | String (255) | Required (NOT NULL) | Contact email address of the requester |
+| `item_name` | String (150) | Required (NOT NULL) | Name of requested document or service |
+| `quantity` | Unsigned Int | Required (NOT NULL) | Quantity of items requested (> 0) |
+| `purpose` | Text | Required (NOT NULL) | Detailed reason for the request |
+| `status` | String (20) | Default: `'pending'` | Current status of the request |
+| `created_at` | Timestamp | Nullable / Auto | Record creation timestamp |
+| `updated_at` | Timestamp | Nullable / Auto | Record last update timestamp |
 
 ## Technologies Used
 
@@ -45,7 +66,7 @@ Follow these steps to run the project locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/guraycha03/document-request-system.git
+git clone [https://github.com/guraycha03/document-request-system.git](https://github.com/guraycha03/document-request-system.git)
 cd document-request-system
 ```
 
@@ -79,16 +100,6 @@ php artisan key:generate
 laravel_request_system_db
 ```
 
-#### Option A — Import the Database (SQL file)
-
-If you have a database dump file (`.sql`), import it:
-
-1. In phpMyAdmin, select the `laravel_request_system_db` database.
-2. Go to the **Import** tab.
-3. Choose the `.sql` file and click **Go**.
-
-#### Option B — Create the Tables via Migrations
-
 Update the database settings in your `.env` file:
 
 ```env
@@ -100,20 +111,30 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Then run the migrations and seeders to create the tables:
+### 5. Run Migrations & Verification
+
+To create the database tables (including the requests table):
 
 ```bash
 php artisan migrate
-php artisan db:seed
 ```
 
-Verify the tables were created:
+Verify that the migrations executed successfully:
 
 ```bash
 php artisan migrate:status
 ```
 
-### 5. Run the Development Server
+To verify the table structure and data in phpMyAdmin:
+
+1. Navigate to laravel_request_system_db > requests.
+2. Execute the SQL query to verify stored records:
+
+```sql
+SELECT id, requester_name, item_name, quantity, status FROM requests;
+```
+
+### 6. Run the Development Server
 
 ```bash
 php artisan serve
@@ -141,11 +162,12 @@ resources/views/     Blade views/templates
 | Install dependencies | `composer install` |
 | Create `.env` file | `copy .env.example .env` |
 | Generate app key | `php artisan key:generate` |
+| Create migration file | `php artisan make:migration create_requests_table` |
 | Run migrations | `php artisan migrate` |
-| Run seeders | `php artisan db:seed` |
+| Check migration status | `php artisan migrate:status` |
 | Start the server | `php artisan serve` |
 | Access the app | `http://127.0.0.1:8000` |
 
 ## License
 
-This project is for academic purposes (Laboratory 1, BSIT 4-3).
+This project is for academic purposes (Laboratory 1 & Laboratory 2, BSIT 4-3).
