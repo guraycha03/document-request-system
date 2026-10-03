@@ -20,8 +20,16 @@ Laboratory 2 — PLAN AND IMPLEMENT THE REQUEST DATA MODEL
 ## User Stories (Laboratory 2)
 
 1. **Requester:** As a requester, I want to submit a document request online so that I can formally request items or services without needing to visit the office physically.
+   - **AC1:** A requester can submit a request with name, email, item, quantity (>0), and purpose; the request is saved with `status = 'pending'`.
+   - **AC2:** Submitting quantity ≤ 0 is rejected with a validation error.
+
 2. **Staff Reviewer:** As a staff reviewer, I want to view the list of pending document requests so that I can process, approve, or reject them in a timely manner.
+   - **AC1:** Staff reviewer sees all requests filtered by `status = 'pending'` with requester details and timestamps.
+   - **AC2:** Staff reviewer can change a request status to `approved` or `rejected`; the change persists and updates `updated_at`.
+
 3. **Record Keeper:** As a record keeper, I want all document request records stored with accurate creation and update timestamps so that I can maintain audit trails and historical reports.
+   - **AC1:** Every request row has non-null `created_at` and `updated_at` timestamps.
+   - **AC2:** Record keeper can query all requests sorted by `created_at` descending to generate audit reports.
 
 ## Data Schema (`requests` Table)
 
@@ -31,11 +39,16 @@ Laboratory 2 — PLAN AND IMPLEMENT THE REQUEST DATA MODEL
 | `requester_name` | String (100) | Required (NOT NULL) | Full name of the requester |
 | `requester_email` | String (255) | Required (NOT NULL) | Contact email address of the requester |
 | `item_name` | String (150) | Required (NOT NULL) | Name of requested document or service |
-| `quantity` | Unsigned Int | Required (NOT NULL) | Quantity of items requested (> 0) |
+| `quantity` | Unsigned Int | Required (NOT NULL), > 0 | Quantity of items requested (must be positive) |
 | `purpose` | Text | Required (NOT NULL) | Detailed reason for the request |
 | `status` | String (20) | Default: `'pending'` | Current status of the request |
 | `created_at` | Timestamp | Nullable / Auto | Record creation timestamp |
 | `updated_at` | Timestamp | Nullable / Auto | Record last update timestamp |
+
+### Design Notes
+
+- **Quantity > 0**: An `unsignedInteger` permits zero, but a request for zero items is meaningless. The application enforces `quantity >= 1` via validation (see `DocumentRequestController::store()`). Sample entries use positive quantities.
+- **Default status = 'pending'**: New requests begin as `pending` so staff reviewers can triage them. The migration sets `DEFAULT 'pending'`; omitting `status` on insert relies on this default (verified by sample row 1).
 
 ## Technologies Used
 
