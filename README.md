@@ -9,7 +9,6 @@ Laboratory 2 — PLAN AND IMPLEMENT THE REQUEST DATA MODEL
 
 ![Document Request and Generation System](screenshots/system-ui.png)
 
-> Screenshot to be added.
 
 ## Student Information
 
