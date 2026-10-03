@@ -7,3 +7,54 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+
+
+/* ==========================================================================
+   GLOBAL RESET & DEFAULTS
+   ========================================================================== */
+
+/* 1. Remove Default Browser Scrollbar Globally */
+html, body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE & Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Optional: Hide scrollbars on scrollable elements while retaining scrolling capability */
+.table-wrap, textarea {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.table-wrap::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
+/* 2. Global CSS Reset & Input Border Fixes */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* 3. Remove Default Browser Focus Rings / Dark Borders Globally */
+input, select, textarea, button {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom, sleek focus styling instead of default browser dark borders */
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 4px var(--accent-ring) !important;
+}
+
+/* Remove default dark focus outline in Chrome/Safari/Edge */
+*:focus-visible {
+    outline: none !important;
+}

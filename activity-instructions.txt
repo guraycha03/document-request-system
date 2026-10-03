@@ -1,0 +1,85 @@
+Laboratory 2
+PLAN AND IMPLEMENT THE REQUEST DATA MODEL
+Instructions:
+1. Work with the same partner from Laboratory 1. Continue using the Laravel request-system
+project, MySQL database, and GitHub repository you established together in that activity.
+2. Open the project and verify that its local .env connects to the existing MySQL database.
+Record the database name in your documentation without showing the password.
+ Example command: php artisan migrate:status
+3. Write three user stories: one for a requester, one for a staff reviewer, and one for a record
+keeper. Use the format:
+"As a [role], I want [action] so that [benefit]."
+Write at least two testable acceptance criteria for each story. Keep the stories focused
+on the data this laboratory will store.
+4. Draw one table labeled requests and create a data dictionary showing each field name, data
+type, constraint, and purpose.
+5. Use these required fields in the requests table:
+ id - primary key; unique request number
+ requester_name - string(100), required; person submitting the request
+ requester_email - string(255), required; contact address
+ item_name - string(150), required; requested item or service
+ quantity - unsignedInteger, required; requested quantity
+ purpose - text, required; reason for the request
+ status - string(20), default pending; request state
+ created_at and updated_at - timestamps; creation and update times
+6. Explain why the request quantity must be greater than zero and why a new request begins
+ with pending status. An unsigned integer permits zero; apply the positive-quantity rule to
+ sample entries now and to application validation in a later laboratory.
+7. Create a migration file in the existing project:
+ php artisan make:migration create_requests_table
+8. In the migration up() method, create the requests table with all required fields. In down(),
+ drop that table so the migration can be reversed.
+9. Review the table name, spelling, field types, default value, timestamps, and rollback method.
+ If a requests table already exists, document the conflict and resolve it without silently
+ deleting existing records.
+10. Run the migration and check its status:
+ php artisan migrate
+ php artisan migrate:status
+ Capture screenshots showing that the migration succeeded and is marked as run.
+ Correct any connection or migration error before continuing.
+11. Open the same MySQL database in phpMyAdmin or another MySQL client. Inspect the
+ requests table structure and verify the columns and types. Capture a screenshot showing
+ the database and table names.
+12. Insert three realistic sample requests using fictitious names and email addresses. Every row
+ must have a positive quantity, purpose, and pending status. Omit the status value for at
+ least one row to test the default.
+13. Display the three records using the Browse view or a query such as:
+ SELECT id, requester_name, item_name, quantity, status FROM requests;
+ Capture the results. Identify the row that proves the default status was applied, and
+ briefly explain how the records verify the table.
+14. Update README.md with the request table fields, the migration command, the steps to
+ verify the table, and the three user stories or a link to their documentation. Retain the setup
+ and database-name instructions from Laboratory 1.
+15. Check git status and confirm that .gitignore still excludes .env. Commit the migration
+ and README update with a meaningful message:
+ git add database/migrations README.md
+ git commit -m "Add request data model and migration"
+16. Push the commit to the same GitHub repository used in Laboratory 1. Confirm that the
+ migration and updated README are visible there and that the actual .env file is absent.
+Specific Outputs
+Submit the following:
+ 1. Documentation containing three user stories and at least six testable acceptance criteria
+ 2. One table request data model diagram and data dictionary, including the quantity and status
+ explanations
+ 3. Laravel migration file with working up() and down() methods
+ 4. Working MySQL requests table containing three fictional sample rows
+ 5. Updated README.md and a new meaningful Git commit
+ 6. Clickable link to the same GitHub repository from Laboratory 1
+ 7. Required screenshots showing the migration, table structure, sample rows, README, and
+ commit
+Submission Instructions
+Submit only one Microsoft Word document (.docx) containing the following:
+1. Cover details: student name, course/year/section, project title, Laboratory 2 title, and date.
+2. Three user stories and at least two measurable acceptance criteria for each.
+3. Request table diagram and data dictionary with field names, types, constraints, and purposes.
+4. Copy or readable screenshots of the migration showing up() and down().
+5. Screenshots of successful php artisan migrate and php artisan migrate:status.
+6. Screenshots of the MySQL table structure and three sample rows, including evidence that an
+omitted status became pending.
+7. A short verification paragraph, evidence of the updated README and new Git commit, and a
+clickable GitHub repository link.
+The GitHub repository must contain the Laravel project, migration file, and updated README. Do
+not upload the actual .env file, passwords, tokens, or a MySQL .sql export. Sample rows need
+only be shown in the Word document.
+
+File name: Surname1_FirstName1_Surname2_FirstName2_Lab2.docx
