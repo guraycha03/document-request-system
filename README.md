@@ -217,3 +217,5 @@ This project is for academic purposes (Laboratory 1, Laboratory 2 & Laboratory 3
 
 
 ## Laboratory 3 Verification
+
+Verification instruction: Test administrator access and administrator-only status updates.
