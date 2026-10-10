@@ -214,3 +214,6 @@ resources/views/     Blade views/templates
 ## License
 
 This project is for academic purposes (Laboratory 1, Laboratory 2 & Laboratory 3, BSIT 4-3).
+
+
+## Laboratory 3 Verification
