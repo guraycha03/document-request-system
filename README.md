@@ -372,4 +372,4 @@ This project is for academic purposes (Laboratory 1, Laboratory 2 & Laboratory 3
 
 ## Laboratory 3 Verification
 
-Verification instruction: Follow the required access checks.
+Verification instruction: Test student ownership and deny access to another student's request.
