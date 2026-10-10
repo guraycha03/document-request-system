@@ -12,13 +12,14 @@ class DocumentRequest extends Model
     // Direct Model to use the 'requests' table
     protected $table = 'requests';
 
-    protected $fillable = [
-        'user_id',
-        'requester_name',
-        'requester_email',
+    /**
+     * Mass-assignment allowlist: only the fields a student may provide.
+     * user_id, requester_name, requester_email and status are written by the
+     * controller from the signed-in account and must never be trusted from input.
+     */
+ protected $fillable = [
         'item_name',
         'quantity',
         'purpose',
-        'status',
     ];
-}
+}   

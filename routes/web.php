@@ -17,10 +17,12 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated Routes (Only logged-in users can access)
+// GET = read, POST = create, PATCH = change status
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    
+
     Route::get('/', [DocumentRequestController::class, 'index'])->name('dashboard');
+    Route::get('/document-requests/{documentRequest}', [DocumentRequestController::class, 'show'])->name('document-requests.show');
     Route::post('/document-requests', [DocumentRequestController::class, 'store'])->name('document-requests.store');
-    Route::put('/document-requests/{documentRequest}', [DocumentRequestController::class, 'update'])->name('document-requests.update');
+    Route::patch('/document-requests/{documentRequest}', [DocumentRequestController::class, 'updateStatus'])->name('document-requests.update-status');
 });

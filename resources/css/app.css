@@ -477,9 +477,7 @@ body.login-page { padding-top: 32px; }
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: saturate(180%) blur(12px);
-    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    background: #ffffff;
     border-bottom: 1px solid var(--border);
     padding: 12px 28px;
     z-index: 100;
@@ -978,3 +976,88 @@ p.empty {
     padding: 24px 0;
     text-align: center;
 }
+
+/* ==========================================================================
+   REQUEST DETAIL PAGE
+   ========================================================================== */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+.back-link:hover { color: var(--text-main); }
+
+.detail-head { align-items: flex-start; }
+.detail-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 20px 0;
+}
+.detail-item { display: flex; flex-direction: column; gap: 4px; }
+.detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.detail-value { font-size: 14.5px; font-weight: 500; color: var(--text-main); word-break: break-word; }
+
+.detail-purpose { margin-bottom: 24px; }
+.detail-purpose p {
+    margin-top: 6px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--text-main);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.detail-admin {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    background: #fbfcfd;
+}
+.detail-admin-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
+.detail-form { justify-content: flex-start; width: auto; }
+
+.cell-actions { white-space: nowrap; }
+.cell-actions .status-form { width: auto; }
+
+/* ==========================================================================
+   STUDENT FORM NOTES AND VALIDATION ERRORS
+   ========================================================================== */
+.account-note {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    background: #fbfcfd;
+    font-size: 13.5px;
+    color: var(--text-main);
+}
+
+.request-errors { margin-bottom: 20px; }
+.request-errors ul { margin: 8px 0 0 18px; font-size: 13.5px; }
