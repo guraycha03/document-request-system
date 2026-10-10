@@ -8,20 +8,12 @@ Laboratory 3 — IMPLEMENT ROLE-BASED ACCESS AND USER ID OWNERSHIP
 
 ---
 
-## Laboratory 3 Report
+## Laboratory 3 Documentation
 
 **[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx](./Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)**
 
 The completed Laboratory 3 Word document submitted for this pair. Click the link to open it
 directly from the repository.
-
-It contains: cover details and driver/reviewer responsibilities, the starting checkpoint
-(database name, Laravel version, preparation commit and account labels), code excerpts for the
-policy, routes, list scoping, validation, trusted field assignment, escaped output and CSRF
-fields, the completed T01–T10 access and input matrix with numbered evidence, the required
-behaviour and database screenshots, the README merge conflict evidence and its resolution, the
-peer review and merge record, the dependency audit, and all repository, issue and pull-request
-links with the final reviewed and merge commit SHAs.
 
 Direct file link:
 `https://github.com/guraycha03/document-request-system/blob/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx`
