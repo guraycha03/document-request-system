@@ -10,10 +10,16 @@ Laboratory 3 — IMPLEMENT ROLE-BASED ACCESS AND USER ID OWNERSHIP
 
 ## Laboratory 3 Documentation
 
-**[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx](./Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)**
+**Download (works for large files):**
+**[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx — Download](https://github.com/guraycha03/document-request-system/raw/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)**
 
-The completed Laboratory 3 Word document submitted for this pair. Click the link to open it
-directly from the repository.
+**Copy stored in this repository:**
+[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx](./Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)
+— on the file page, click **Download raw file**
+
+**External copy:** `[ PASTE YOUR LINK HERE ]`
+
+The completed Laboratory 3 Word document submitted for this pair.
 
 Direct file link:
 `https://github.com/guraycha03/document-request-system/blob/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx`
