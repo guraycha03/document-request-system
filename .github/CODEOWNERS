@@ -1,0 +1,5 @@
+# Default owners for the Laboratory 3 secure request system.
+# With "Require review from Code Owners" enabled, a pull request needs approval
+# from someone listed here. The author cannot approve their own change, so every
+# pull request must be approved by the reviewer.
+*       @guraycha03 @SamBianca

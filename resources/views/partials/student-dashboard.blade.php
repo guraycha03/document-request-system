@@ -13,21 +13,15 @@
 
     <div class="tab-content">
         <div id="request-form" class="tab-pane active">
-            <form action="/document-requests" method="POST" class="request-form">
+            <form action="{{ route('document-requests.store') }}" method="POST" class="request-form">
                 @csrf
 
+
                 <div class="form-section-label">Requester details</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="requester_name">Student Name</label>
-                        <input type="text" id="requester_name" name="requester_name" value="{{ auth()->user()->name }}" required readonly>
-                        <span class="field-hint">Taken automatically from your account.</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="requester_email">Student Email</label>
-                        <input type="email" id="requester_email" name="requester_email" value="{{ auth()->user()->email }}" required readonly>
-                        <span class="field-hint">Taken automatically from your account.</span>
-                    </div>
+                <div class="account-note">
+                    <span><strong>Name:</strong> {{ auth()->user()->name }}</span>
+                    <span><strong>Email:</strong> {{ auth()->user()->email }}</span>
+                    <span class="field-hint">Attached automatically from your signed-in account. These fields are not accepted from the form.</span>
                 </div>
 
                 <div class="form-section-label">Request information</div>
@@ -85,17 +79,21 @@
                                 <th>Purpose</th>
                                 <th>Status</th>
                                 <th>Submitted</th>
+                                <th class="th-action">Details</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($requests as $request)
+                            @foreach ($requests as $documentRequest)
                                 <tr>
-                                    <td class="row-id">{{ $request->id }}</td>
-                                    <td class="cell-primary">{{ $request->item_name }}</td>
-                                    <td class="cell-num">{{ $request->quantity }}</td>
-                                    <td class="cell-muted cell-purpose">{{ $request->purpose }}</td>
-                                    <td><span class="status {{ $request->status }}">{{ $request->status }}</span></td>
-                                    <td class="timestamp-col">{{ $request->created_at->format('M d, Y H:i') }}</td>
+                                    <td class="row-id">{{ $documentRequest->id }}</td>
+                                    <td class="cell-primary">{{ $documentRequest->item_name }}</td>
+                                    <td class="cell-num">{{ $documentRequest->quantity }}</td>
+                                    <td class="cell-muted cell-purpose">{{ $documentRequest->purpose }}</td>
+                                    <td><span class="status {{ $documentRequest->status }}">{{ $documentRequest->status }}</span></td>
+                                    <td class="timestamp-col">{{ $documentRequest->created_at->format('M d, Y H:i') }}</td>
+                                    <td class="cell-actions">
+                                        <a href="{{ route('document-requests.show', $documentRequest) }}" class="button button-secondary action-btn">View</a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

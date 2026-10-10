@@ -12,7 +12,7 @@ class RoleUserSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Laboratory 3 accounts: two fictional students and one administrator.
+     * Two fictional students and one administrator
      */
     private const ACCOUNTS = [
         [
@@ -35,14 +35,10 @@ class RoleUserSeeder extends Seeder
         ],
     ];
 
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $emails = array_column(self::ACCOUNTS, 'email');
 
-        // Remove the Laboratory 2 role accounts that are no longer part of the system.
         User::whereNotIn('email', $emails)->delete();
 
         foreach (self::ACCOUNTS as $account) {

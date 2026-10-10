@@ -30,28 +30,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($requests as $request)
-                        @if ($request->status === 'pending')
+                    @foreach ($requests as $documentRequest)
+                        @if ($documentRequest->status === 'pending')
                             <tr>
-                                <td class="row-id">{{ $request->id }}</td>
+                                <td class="row-id">{{ $documentRequest->id }}</td>
                                 <td>
-                                    <div class="cell-primary">{{ $request->requester_name }}</div>
-                                    <div class="cell-sub">{{ $request->requester_email }}</div>
+                                    <div class="cell-primary">{{ $documentRequest->requester_name }}</div>
+                                    <div class="cell-sub">{{ $documentRequest->requester_email }}</div>
                                 </td>
-                                <td class="cell-primary">{{ $request->item_name }}</td>
-                                <td class="cell-num">{{ $request->quantity }}</td>
-                                <td class="cell-muted cell-purpose">{{ $request->purpose }}</td>
-                                <td><span class="status {{ $request->status }}">{{ $request->status }}</span></td>
-                                <td>
-                                    <form action="/document-requests/{{ $request->id }}" method="POST" class="status-form">
-                                        @csrf
-                                        @method('PUT')
-                                        <select name="status" class="status-select" aria-label="New status for request {{ $request->id }}">
-                                            <option value="approved">Approve</option>
-                                            <option value="rejected">Reject</option>
-                                        </select>
-                                        <button type="submit" class="button action-btn">Update</button>
-                                    </form>
+                                <td class="cell-primary">{{ $documentRequest->item_name }}</td>
+                                <td class="cell-num">{{ $documentRequest->quantity }}</td>
+                                <td class="cell-muted cell-purpose">{{ $documentRequest->purpose }}</td>
+                                <td><span class="status {{ $documentRequest->status }}">{{ $documentRequest->status }}</span></td>
+                                <td class="cell-actions">
+                                    <a href="{{ route('document-requests.show', $documentRequest) }}" class="button button-secondary action-btn">View</a>
+                                    @can('updateStatus', $documentRequest)
+                                        <form action="{{ route('document-requests.update-status', $documentRequest) }}" method="POST" class="status-form">
+                                            @csrf
+                                            @method('PATCH')
+                                            <select name="status" class="status-select" aria-label="New status for request {{ $documentRequest->id }}">
+                                                <option value="approved">Approve</option>
+                                                <option value="rejected">Reject</option>
+                                            </select>
+                                            <button type="submit" class="button action-btn">Update</button>
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @endif
@@ -96,19 +99,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($requests as $request)
+                    @foreach ($requests as $documentRequest)
                         <tr>
-                            <td class="row-id">{{ $request->id }}</td>
+                            <td class="row-id">{{ $documentRequest->id }}</td>
                             <td>
-                                <div class="cell-primary">{{ $request->requester_name }}</div>
-                                <div class="cell-sub">{{ $request->requester_email }}</div>
+                                <div class="cell-primary">{{ $documentRequest->requester_name }}</div>
+                                <div class="cell-sub">{{ $documentRequest->requester_email }}</div>
                             </td>
-                            <td class="cell-primary">{{ $request->item_name }}</td>
-                            <td class="cell-num">{{ $request->quantity }}</td>
-                            <td class="cell-muted cell-purpose">{{ $request->purpose }}</td>
-                            <td><span class="status {{ $request->status }}">{{ $request->status }}</span></td>
-                            <td class="timestamp-col">{{ $request->created_at->format('M d, Y H:i:s') }}</td>
-                            <td class="timestamp-col">{{ $request->updated_at->format('M d, Y H:i:s') }}</td>
+                            <td class="cell-primary">{{ $documentRequest->item_name }}</td>
+                            <td class="cell-num">{{ $documentRequest->quantity }}</td>
+                            <td class="cell-muted cell-purpose">{{ $documentRequest->purpose }}</td>
+                            <td><span class="status {{ $documentRequest->status }}">{{ $documentRequest->status }}</span></td>
+                            <td class="timestamp-col">{{ $documentRequest->created_at->format('M d, Y H:i:s') }}</td>
+                            <td class="timestamp-col">{{ $documentRequest->updated_at->format('M d, Y H:i:s') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -4,87 +4,83 @@ namespace App\Http\Controllers;
 
 use App\Models\DocumentRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class DocumentRequestController extends Controller
 {
-    // Display dashboard based on user role
-    public function index()
+    /**
+     * LIST — GET /
+     * Students see only their own records; administrators see every record.
+     */
+    public function index(Request $request)
     {
-        $user = Auth::user();
+        Gate::authorize('viewAny', DocumentRequest::class);
 
-        if ($user->isStudent()) {
-            return $this->studentDashboard();
-        } elseif ($user->isAdministrator()) {
-            return $this->administratorDashboard();
-        }
+        $user = $request->user();
 
-        abort(403);
-    }
-
-    // Student: Submit document requests and view own records (user id ownership)
-    public function studentDashboard()
-    {
-        $requests = DocumentRequest::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $requests = $user->isAdministrator()
+            ? DocumentRequest::orderBy('created_at', 'desc')->get()
+            : DocumentRequest::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         return view('welcome', compact('requests'));
     }
 
-    // Administrator: View, review, and audit all records
-    public function administratorDashboard()
+    /**
+     * VIEW — GET /document-requests/{documentRequest}
+     * Owner or administrator only; another student receives 403.
+     */
+    public function show(DocumentRequest $documentRequest)
     {
-        $requests = DocumentRequest::orderBy('created_at', 'desc')->get();
-        return view('welcome', compact('requests'));
+        Gate::authorize('view', $documentRequest);
+
+        return view('document-requests.show', compact('documentRequest'));
     }
 
-    // Store new request (Student only)
+    /**
+     * CREATE — POST /document-requests
+     * Only validated fields are read from the input. user_id, requester
+     * identity and the initial status are assigned from the signed-in account.
+     */
     public function store(Request $request)
     {
-        $this->authorizeStudent();
+        Gate::authorize('create', DocumentRequest::class);
 
         $validated = $request->validate([
-            'requester_name'  => 'required|string|max:100',
-            'requester_email' => 'required|email|max:255',
-            'item_name'       => 'required|string|max:150',
-            'quantity'        => 'required|integer|min:1',
-            'purpose'         => 'required|string',
+            'item_name' => ['required', 'string', 'max:150'],
+            'quantity'  => ['required', 'integer', 'min:1'],
+            'purpose'   => ['required', 'string', 'max:2000'],
         ]);
 
-        DocumentRequest::create([
-            ...$validated,
-            'user_id' => Auth::id(),
-        ]);
+        $documentRequest = new DocumentRequest();
+        $documentRequest->item_name = $validated['item_name'];
+        $documentRequest->quantity = $validated['quantity'];
+        $documentRequest->purpose = $validated['purpose'];
+        $documentRequest->user_id = $request->user()->id;
+        $documentRequest->requester_name = $request->user()->name;
+        $documentRequest->requester_email = $request->user()->email;
+        $documentRequest->status = 'pending';
+        $documentRequest->save();
 
-        return redirect('/')->with('success', 'Document request submitted successfully!');
+        return redirect()->route('dashboard')->with('success', 'Document request submitted successfully!');
     }
 
-    // Update request status (Administrator only)
-    public function update(Request $request, DocumentRequest $documentRequest)
+    /**
+     * UPDATE STATUS — PATCH /document-requests/{documentRequest}
+     * Administrator only. Only the status column may change.
+     */
+    public function updateStatus(Request $request, DocumentRequest $documentRequest)
     {
-        $this->authorizeAdministrator();
+        Gate::authorize('updateStatus', $documentRequest);
 
         $validated = $request->validate([
-            'status' => 'required|in:pending,approved,rejected',
+            'status' => ['required', 'string', 'in:pending,approved,rejected'],
         ]);
 
-        $documentRequest->update($validated);
+        $documentRequest->status = $validated['status'];
+        $documentRequest->save();
 
-        return redirect('/')->with('success', 'Request status updated successfully!');
-    }
-
-    private function authorizeStudent()
-    {
-        if (!Auth::user()->canSubmitRequest()) {
-            abort(403, 'Only students can submit document requests.');
-        }
-    }
-
-    private function authorizeAdministrator()
-    {
-        if (!Auth::user()->canReviewRequests()) {
-            abort(403, 'Only administrators can update request status.');
-        }
+        return redirect()->route('dashboard')->with('success', 'Request status updated successfully!');
     }
 }
