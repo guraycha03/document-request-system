@@ -1,0 +1,287 @@
+================================================================================
+LABORATORY 2 — PLAN AND IMPLEMENT THE REQUEST DATA MODEL
+Submission Document Template (for .docx conversion)
+File name: Germina_Samantha_Bianca_Guray_Charisse_Lab2.docx
+================================================================================
+
+COVER PAGE
+-----------
+Student Name:         Samantha Bianca Germina, Charisse G. Guray
+Course/Year/Section:  BSIT 4-3
+Project Title:        Document Request and Generation System
+Laboratory Title:     Laboratory 2 — Plan and Implement the Request Data Model
+Date:                 [INSERT DATE]
+
+GitHub Repository:    https://github.com/guraycha03/document-request-system.git
+                      (Clickable link — verify .env is NOT in repo)
+
+================================================================================
+TABLE OF CONTENTS
+-----------------
+1. User Stories & Acceptance Criteria
+2. Request Table Diagram & Data Dictionary
+3. Migration File (up() and down())
+4. Migration Execution Screenshots
+5. MySQL Table Structure & Sample Rows Screenshots
+6. Verification Paragraph, README Evidence, Git Commit
+7. GitHub Repository Link
+
+================================================================================
+SECTION 1: USER STORIES & ACCEPTANCE CRITERIA
+----------------------------------------------
+
+USER STORY 1 — REQUESTER
+------------------------
+As a requester, I want to submit a document request online so that I can formally 
+request items or services without needing to visit the office physically.
+
+Acceptance Criteria:
+  AC1.1: A requester can submit a request with name, email, item, quantity (>0), 
+         and purpose; the request is saved with status = 'pending'.
+  AC1.2: Submitting quantity ≤ 0 is rejected with a validation error.
+
+USER STORY 2 — STAFF REVIEWER
+-----------------------------
+As a staff reviewer, I want to view the list of pending document requests so that 
+I can process, approve, or reject them in a timely manner.
+
+Acceptance Criteria:
+  AC2.1: Staff reviewer sees all requests filtered by status = 'pending' with 
+         requester details and timestamps.
+  AC2.2: Staff reviewer can change a request status to 'approved' or 'rejected'; 
+         the change persists and updates updated_at.
+
+USER STORY 3 — RECORD KEEPER
+----------------------------
+As a record keeper, I want all document request records stored with accurate 
+creation and update timestamps so that I can maintain audit trails and historical 
+reports.
+
+Acceptance Criteria:
+  AC3.1: Every request row has non-null created_at and updated_at timestamps.
+  AC3.2: Record keeper can query all requests sorted by created_at descending to 
+         generate audit reports.
+
+================================================================================
+SECTION 2: REQUEST TABLE DIAGRAM & DATA DICTIONARY
+---------------------------------------------------
+
+TABLE DIAGRAM (ERD-style)
+-------------------------
++-------------------+-------------------------+------------------+
+|      requests     |                         |                  |
++-------------------+-------------------------+------------------+
+| PK  id            | BIGINT UNSIGNED         | Auto-increment   |
+|     requester_name| VARCHAR(100)            | NOT NULL         |
+|     requester_email| VARCHAR(255)           | NOT NULL         |
+|     item_name     | VARCHAR(150)            | NOT NULL         |
+|     quantity      | INT UNSIGNED            | NOT NULL, > 0    |
+|     purpose       | TEXT                    | NOT NULL         |
+|     status        | VARCHAR(20)             | DEFAULT 'pending'|
+|     created_at    | TIMESTAMP               | NULLABLE         |
+|     updated_at    | TIMESTAMP               | NULLABLE         |
++-------------------+-------------------------+------------------+
+
+DATA DICTIONARY
+---------------
+| Field Name       | Data Type      | Constraints                    | Purpose                              |
+|------------------|----------------|--------------------------------|--------------------------------------|
+| id               | BIGINT UNSIGNED| PK, Auto-increment             | Unique identifier for each request   |
+| requester_name   | VARCHAR(100)   | NOT NULL                       | Full name of the requester           |
+| requester_email  | VARCHAR(255)   | NOT NULL                       | Contact email address of the requester|
+| item_name        | VARCHAR(150)   | NOT NULL                       | Name of requested document/service   |
+| quantity         | INT UNSIGNED   | NOT NULL, CHECK (quantity > 0) | Quantity of items requested (> 0)    |
+| purpose          | TEXT           | NOT NULL                       | Detailed reason for the request      |
+| status           | VARCHAR(20)    | DEFAULT 'pending'              | Current status of the request        |
+| created_at       | TIMESTAMP      | NULLABLE, Auto                 | Record creation timestamp            |
+| updated_at       | TIMESTAMP      | NULLABLE, Auto                 | Record last update timestamp         |
+
+DESIGN EXPLANATIONS
+-------------------
+Quantity > 0:
+  - An unsignedInteger permits zero, but a request for zero items is meaningless.
+  - Application enforces quantity >= 1 via validation (DocumentRequestController::store()).
+  - Sample entries all use positive quantities (1, 2, 1).
+
+Default status = 'pending':
+  - New requests begin as 'pending' so staff reviewers can triage them.
+  - Migration sets DEFAULT 'pending'; omitting status on insert relies on this default.
+  - Verified by sample row where status was omitted and became 'pending'.
+
+================================================================================
+SECTION 3: MIGRATION FILE
+-------------------------
+File: database/migrations/2026_10_01_114857_create_requests_table.php
+
+--- UP() METHOD ---
+-------------------
+<?php
+public function up(): void
+{
+    Schema::create('requests', function (Blueprint $table) {
+        $table->id();
+        $table->string('requester_name', 100);
+        $table->string('requester_email', 255);
+        $table->string('item_name', 150);
+        $table->unsignedInteger('quantity');
+        $table->text('purpose');
+        $table->string('status', 20)->default('pending');
+        $table->timestamps();
+    });
+}
+
+--- DOWN() METHOD ---
+-------------------
+<?php
+public function down(): void
+{
+    Schema::dropIfExists('requests');
+}
+
+[SCREENSHOT PLACEHOLDER 3.1]
+Caption: "Migration file showing up() method with all required fields"
+Location: Insert screenshot of the migration file in your IDE/editor
+Filename suggestion: migration-up-method.png
+
+[SCREENSHOT PLACEHOLDER 3.2]
+Caption: "Migration file showing down() method with rollback"
+Location: Insert screenshot of the down() method
+Filename suggestion: migration-down-method.png
+
+================================================================================
+SECTION 4: MIGRATION EXECUTION SCREENSHOTS
+-------------------------------------------
+
+[SCREENSHOT PLACEHOLDER 4.1]
+Caption: "php artisan migrate — successful execution"
+Command: php artisan migrate
+Expected output: Migration table created, "Ran" status
+Filename suggestion: artisan-migrate-success.png
+
+[SCREENSHOT PLACEHOLDER 4.2]
+Caption: "php artisan migrate:status — all migrations marked as Ran"
+Command: php artisan migrate:status
+Expected output:
+  0001_01_01_000000_create_users_table .. [1] Ran
+  0001_01_01_000001_create_cache_table .. [1] Ran
+  0001_01_01_000002_create_jobs_table .. [1] Ran
+  2026_10_01_114857_create_requests_table .. [1] Ran
+  2026_10_02_085549_add_role_to_users_table .. [1] Ran
+Filename suggestion: artisan-migrate-status.png
+
+================================================================================
+SECTION 5: MYSQL TABLE STRUCTURE & SAMPLE ROWS SCREENSHOTS
+-----------------------------------------------------------
+
+[SCREENSHOT PLACEHOLDER 5.1]
+Caption: "phpMyAdmin — requests table structure showing columns and types"
+Location: phpMyAdmin > laravel_request_system_db > requests > Structure
+Verify: All 10 columns present, correct types, status default = 'pending'
+Filename suggestion: phpmyadmin-table-structure.png
+
+[SCREENSHOT PLACEHOLDER 5.2]
+Caption: "phpMyAdmin — Browse view showing 6 sample rows"
+Location: phpMyAdmin > laravel_request_system_db > requests > Browse
+Verify: 
+  - Row 1 (id=1): Alon Cruz, quantity=1, status=pending (default applied)
+  - Row 2 (id=2): Jane Lim, quantity=2, status=approved
+  - Row 3 (id=3): Mike Santos, quantity=1, status=rejected
+  - Rows 4-6: Additional seeded rows
+Filename suggestion: phpmyadmin-sample-rows.png
+
+[SCREENSHOT PLACEHOLDER 5.3]
+Caption: "SQL query result verifying default status"
+Query: SELECT id, requester_name, item_name, quantity, status FROM requests;
+Expected: Row with omitted status shows 'pending'
+Filename suggestion: sql-query-verification.png
+
+================================================================================
+SECTION 6: VERIFICATION PARAGRAPH, README EVIDENCE, GIT COMMIT
+---------------------------------------------------------------
+
+VERIFICATION PARAGRAPH
+----------------------
+The requests table was successfully created via Laravel migration 
+(2026_10_01_114857_create_requests_table.php). All required fields are present 
+with correct data types and constraints. The migration executed without errors 
+as shown by 'php artisan migrate:status' marking it as 'Ran'. In phpMyAdmin, the 
+table structure confirms 10 columns including id (PK), requester_name (VARCHAR 100), 
+requester_email (VARCHAR 255), item_name (VARCHAR 150), quantity (UNSIGNED INT), 
+purpose (TEXT), status (VARCHAR 20 DEFAULT 'pending'), created_at, and updated_at. 
+Six sample rows were inserted (3 via seeder, 3 via manual SQL). All rows have 
+positive quantities (1 or 2). The default status 'pending' was verified: rows 
+where status was omitted on insert (e.g., id=1, Alon Cruz) correctly received the 
+default value. Timestamps created_at and updated_at are auto-populated and non-null 
+for all rows, satisfying audit trail requirements.
+
+README.MD EVIDENCE
+------------------
+[SCREENSHOT PLACEHOLDER 6.1]
+Caption: "Updated README.md showing User Stories, Acceptance Criteria, Data Dictionary, and Migration Commands"
+Location: GitHub repo README.md or local file preview
+Filename suggestion: readme-evidence.png
+
+Key README sections included:
+  - User Stories (3) with 2 Acceptance Criteria each (6 total)
+  - Data Schema table with all 10 fields
+  - Design notes for quantity > 0 and default status
+  - Migration commands (make:migration, migrate, migrate:status)
+  - Database name: laravel_request_system_db
+  - Installation steps
+
+GIT COMMIT EVIDENCE
+-------------------
+[SCREENSHOT PLACEHOLDER 6.2]
+Caption: "Git commit history showing 'Add request data model and migration'"
+Command: git log --oneline -5
+Expected: Commit 521ca96 (or similar) with message "Add request data model and migration"
+Filename suggestion: git-commit-evidence.png
+
+[SCREENSHOT PLACEHOLDER 6.3]
+Caption: "GitHub repository showing committed migration and updated README"
+Location: https://github.com/guraycha03/document-request-system.git
+Verify: 
+  - database/migrations/2026_10_01_114857_create_requests_table.php visible
+  - README.md updated with Lab 2 content
+  - .env file NOT present in repo
+Filename suggestion: github-repo-evidence.png
+
+================================================================================
+SECTION 7: GITHUB REPOSITORY LINK
+---------------------------------
+Repository URL: https://github.com/guraycha03/document-request-system.git
+
+[SCREENSHOT PLACEHOLDER 7.1]
+Caption: "GitHub repository home page"
+Verify: Laravel project files visible, migration file present, README updated
+Filename suggestion: github-home.png
+
+================================================================================
+SCREENSHOT CHECKLIST (7 total required)
+---------------------------------------
+[ ] 3.1 Migration up() method
+[ ] 3.2 Migration down() method
+[ ] 4.1 php artisan migrate success
+[ ] 4.2 php artisan migrate:status
+[ ] 5.1 phpMyAdmin table structure
+[ ] 5.2 phpMyAdmin sample rows (6 rows)
+[ ] 5.3 SQL query verification
+[ ] 6.1 README.md evidence
+[ ] 6.2 Git commit log
+[ ] 6.3 GitHub repo files
+[ ] 7.1 GitHub repository home
+
+================================================================================
+CONVERSION TO .DOCX INSTRUCTIONS
+--------------------------------
+1. Copy this entire content into Microsoft Word
+2. Replace all [SCREENSHOT PLACEHOLDER X.Y] with actual screenshots
+3. Add captions below each screenshot (use the Caption text provided)
+4. Fill in [INSERT DATE] on cover page
+5. Save as: Germina_Samantha_Bianca_Guray_Charisse_Lab2.docx
+6. Ensure all screenshots are readable (not too small)
+7. Verify GitHub link is clickable (Ctrl+Click to test)
+
+================================================================================
+END OF TEMPLATE
+================================================================================

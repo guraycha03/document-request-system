@@ -13,45 +13,36 @@ class DocumentRequestController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->isRequester()) {
-            return $this->requesterDashboard();
-        } elseif ($user->isStaffReviewer()) {
-            return $this->staffReviewerDashboard();
-        } elseif ($user->isRecordKeeper()) {
-            return $this->recordKeeperDashboard();
+        if ($user->isStudent()) {
+            return $this->studentDashboard();
+        } elseif ($user->isAdministrator()) {
+            return $this->administratorDashboard();
         }
 
         abort(403);
     }
 
-    // Requester: Submit document requests
-    public function requesterDashboard()
+    // Student: Submit document requests and view own records (user id ownership)
+    public function studentDashboard()
     {
-        $requests = DocumentRequest::where('requester_email', Auth::user()->email)
+        $requests = DocumentRequest::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('welcome', compact('requests'));
     }
 
-    // Staff Reviewer: View and process pending requests
-    public function staffReviewerDashboard()
+    // Administrator: View, review, and audit all records
+    public function administratorDashboard()
     {
         $requests = DocumentRequest::orderBy('created_at', 'desc')->get();
         return view('welcome', compact('requests'));
     }
 
-    // Record Keeper: View all records with timestamps
-    public function recordKeeperDashboard()
-    {
-        $requests = DocumentRequest::orderBy('created_at', 'desc')->get();
-        return view('welcome', compact('requests'));
-    }
-
-    // Store new request (Requester only)
+    // Store new request (Student only)
     public function store(Request $request)
     {
-        $this->authorizeRequester();
+        $this->authorizeStudent();
 
         $validated = $request->validate([
             'requester_name'  => 'required|string|max:100',
@@ -61,15 +52,18 @@ class DocumentRequestController extends Controller
             'purpose'         => 'required|string',
         ]);
 
-        DocumentRequest::create($validated);
+        DocumentRequest::create([
+            ...$validated,
+            'user_id' => Auth::id(),
+        ]);
 
         return redirect('/')->with('success', 'Document request submitted successfully!');
     }
 
-    // Update request status (Staff Reviewer only)
+    // Update request status (Administrator only)
     public function update(Request $request, DocumentRequest $documentRequest)
     {
-        $this->authorizeStaffReviewer();
+        $this->authorizeAdministrator();
 
         $validated = $request->validate([
             'status' => 'required|in:pending,approved,rejected',
@@ -80,17 +74,17 @@ class DocumentRequestController extends Controller
         return redirect('/')->with('success', 'Request status updated successfully!');
     }
 
-    private function authorizeRequester()
+    private function authorizeStudent()
     {
         if (!Auth::user()->canSubmitRequest()) {
-            abort(403, 'Only requesters can submit document requests.');
+            abort(403, 'Only students can submit document requests.');
         }
     }
 
-    private function authorizeStaffReviewer()
+    private function authorizeAdministrator()
     {
         if (!Auth::user()->canReviewRequests()) {
-            abort(403, 'Only staff reviewers can update request status.');
+            abort(403, 'Only administrators can update request status.');
         }
     }
 }

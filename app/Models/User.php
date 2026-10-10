@@ -17,9 +17,8 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    public const ROLE_REQUESTER = 'requester';
-    public const ROLE_STAFF_REVIEWER = 'staff_reviewer';
-    public const ROLE_RECORD_KEEPER = 'record_keeper';
+    public const ROLE_STUDENT = 'student';
+    public const ROLE_ADMINISTRATOR = 'administrator';
 
     /**
      * Get the attributes that should be cast.
@@ -34,33 +33,28 @@ class User extends Authenticatable
         ];
     }
 
-    public function isRequester(): bool
+    public function isStudent(): bool
     {
-        return $this->role === self::ROLE_REQUESTER;
+        return $this->role === self::ROLE_STUDENT;
     }
 
-    public function isStaffReviewer(): bool
+    public function isAdministrator(): bool
     {
-        return $this->role === self::ROLE_STAFF_REVIEWER;
-    }
-
-    public function isRecordKeeper(): bool
-    {
-        return $this->role === self::ROLE_RECORD_KEEPER;
+        return $this->role === self::ROLE_ADMINISTRATOR;
     }
 
     public function canSubmitRequest(): bool
     {
-        return $this->isRequester();
+        return $this->isStudent();
     }
 
     public function canReviewRequests(): bool
     {
-        return $this->isStaffReviewer();
+        return $this->isAdministrator();
     }
 
     public function canViewAllRecords(): bool
     {
-        return $this->isRecordKeeper();
+        return $this->isAdministrator();
     }
 }

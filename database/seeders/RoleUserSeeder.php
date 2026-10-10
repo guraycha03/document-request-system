@@ -12,29 +12,48 @@ class RoleUserSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
+     * Laboratory 3 accounts: two fictional students and one administrator.
+     */
+    private const ACCOUNTS = [
+        [
+            'name' => 'Jane Lim',
+            'email' => 'jane.lim@school.edu',
+            'password' => 'student123',
+            'role' => User::ROLE_STUDENT,
+        ],
+        [
+            'name' => 'Alon Cruz',
+            'email' => 'alon.cruz@school.edu',
+            'password' => 'student123',
+            'role' => User::ROLE_STUDENT,
+        ],
+        [
+            'name' => 'Mike Santos',
+            'email' => 'mike.s@gmail.com',
+            'password' => 'admin123',
+            'role' => User::ROLE_ADMINISTRATOR,
+        ],
+    ];
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'John Requester',
-            'email' => 'john@gmail.com',
-            'password' => Hash::make('requester123'),
-            'role' => User::ROLE_REQUESTER,
-        ]);
+        $emails = array_column(self::ACCOUNTS, 'email');
 
-        User::create([
-            'name' => 'Jane Staff Reviewer',
-            'email' => 'jane@gmail.com',
-            'password' => Hash::make('staff123'),
-            'role' => User::ROLE_STAFF_REVIEWER,
-        ]);
+        // Remove the Laboratory 2 role accounts that are no longer part of the system.
+        User::whereNotIn('email', $emails)->delete();
 
-        User::create([
-            'name' => 'Bob Record Keeper',
-            'email' => 'bob@gmail.com',
-            'password' => Hash::make('keeper123'),
-            'role' => User::ROLE_RECORD_KEEPER,
-        ]);
+        foreach (self::ACCOUNTS as $account) {
+            User::updateOrCreate(
+                ['email' => $account['email']],
+                [
+                    'name' => $account['name'],
+                    'password' => Hash::make($account['password']),
+                    'role' => $account['role'],
+                ]
+            );
+        }
     }
 }
