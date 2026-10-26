@@ -1,0 +1,9 @@
+.git
+.env
+.env.local
+node_modules
+vendor
+storage/logs/*
+storage/framework/sessions/*
+*.bak
+*.zip
