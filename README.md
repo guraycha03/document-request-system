@@ -4,30 +4,29 @@ A Laravel-based web application for submitting document requests and generating 
 
 Laboratory 1 — ESTABLISH THE LARAVEL PROJECT AND MAP ITS DEVOPS WORKFLOW  
 Laboratory 2 — PLAN AND IMPLEMENT THE REQUEST DATA MODEL  
-Laboratory 3 — IMPLEMENT ROLE-BASED ACCESS AND USER ID OWNERSHIP
+Laboratory 3 — IMPLEMENT ROLE-BASED ACCESS AND USER ID OWNERSHIP  
+Laboratory 4 — RUN LARAVEL IN A REPRODUCIBLE CONTAINER ENVIRONMENT
 
 ---
 
-## Laboratory 3 Documentation
+## Laboratory 4 Documentation
 
-**[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx — Download](https://github.com/guraycha03/document-request-system/raw/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)**
+**[Germina_Samantha_Bianca_Guray_Charisse_Lab4.docx — Download](https://github.com/guraycha03/document-request-system/raw/main/Germina_Samantha_Bianca_Guray_Charisse_Lab4.docx)**
 
-**Copy stored in this repository:**
-[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx](./Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)
-— on the file page, click **Download raw file**
 
-**External copy:** [Open the Laboratory 3 report in Google Docs](https://docs.google.com/document/d/1_eXyKYUQcL4RLG5xBM083O3a8d5Ah6L5/edit?usp=drive_link)
+**External copy:** 
 
-The completed Laboratory 3 Word document submitted for this pair.
+The completed Laboratory 3 & 4 Word document.
 
-Direct file link:
-`https://github.com/guraycha03/document-request-system/blob/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx`
+[Open the Laboratory 3 docx file in Google Docs](https://docs.google.com/document/d/1_eXyKYUQcL4RLG5xBM083O3a8d5Ah6L5/edit?usp=sharing&ouid=117313599197372143557&rtpof=true&sd=true)
+
+[Open the Laboratory 4 docx file in Google Docs](https://docs.google.com/document/d/1wzKMWB86FFJDXnh6es2O_Q_m0NkX9ZmN/edit?usp=sharing&ouid=117313599197372143557&rtpof=true&sd=true)
 
 ---
 
 ## Screenshots
 
-![Document Request and Generation System](screenshots/system-ui.png)
+![Document Request and Generation System](screenshots/lab-04.png)
 
 
 ## Student Information
@@ -166,6 +165,184 @@ $documentRequest->status = 'pending';
 - **Quantity > 0**: An `unsignedInteger` permits zero, but a request for zero items is meaningless. The application enforces `quantity >= 1` via validation (see `DocumentRequestController::store()`). Sample entries use positive quantities.
 - **Default status = 'pending'**: New requests begin as `pending` so the administrator can triage them. The migration sets `DEFAULT 'pending'`; omitting `status` on insert relies on this default (verified by sample row 1).
 - **User id ownership**: `DocumentRequestController::store()` writes `user_id = auth()->id()` on every submission. The student dashboard filters with `where('user_id', Auth::id())`, while the administrator dashboard loads all rows, so each role only reaches the records it is allowed to see.
+
+## Laboratory 4 — Reproducible Container Environment
+
+The application and its MySQL database now run in Docker containers. The Laboratory 1–3 documentation below (XAMPP / `php artisan serve`) is preserved unchanged as the local development path; the container path is the reproducible deployment path used for this laboratory.
+
+### Docker Requirements
+
+| Software | Version used | Purpose |
+| -------- | ------------ | ------- |
+| Docker Engine / Docker Desktop | 29.9.2 | Builds images and runs containers |
+| Docker Compose | v5.6.1 (plugin v5) | Starts and stops the multi-container stack |
+| Git | Latest | Version control and reproduction |
+| Web browser | Latest | Accessing `http://127.0.0.1:8080` |
+
+**Recorded versions:** Laravel `13.x` (`php artisan --version`) · Docker `29.9.2` · Docker Compose `v5.6.1` · starting Git commit `221b94c` · container database `laravel_request_container_db`.
+
+### Container Architecture
+
+```
+                        127.0.0.1:8080 (published, loopback only)
+  Browser  ────────────────────────────────┐
+                                           ▼
+                              ┌──────────────────────────┐
+                              │  web  (nginx:1.27-alpine)│
+                              │  serves /var/www/public  │
+                              └────────────┬─────────────┘
+                    FastCGI, internal network laravel_net │
+                                           ▼ app:9000
+                              ┌──────────────────────────┐
+                              │  app  (php:8.3-fpm-alpine)│
+                              │  Laravel + PHP-FPM        │
+                              │  non-root user laravel    │
+                              └────────────┬─────────────┘
+                            MySQL, internal network only │
+                                           ▼ db:3306
+                              ┌──────────────────────────┐
+                              │  db   (mysql:8.0)         │
+                              │  named volume db_data     │
+                              │  healthcheck enabled      │
+                              │  no published ports       │
+                              └──────────────────────────┘
+```
+
+### Service Table
+
+| Service | Purpose | Connection | Configuration |
+| :--- | :--- | :--- | :--- |
+| `web` | Serves the Laravel public directory through Nginx at `http://127.0.0.1:8080` | Receives browser traffic on `127.0.0.1:8080`, passes PHP to `app:9000` | `nginx:1.27-alpine`, mounts `./docker/nginx/default.conf`, `depends_on: app` |
+| `app` | Runs Laravel using PHP-FPM and communicates with the database | Talks to `db:3306` over `laravel_net` | `php:8.3-fpm-alpine`, `env_file: .env.container`, `depends_on: db (service_healthy)`, runs as `laravel` (uid 1000) |
+| `db` | Runs MySQL and stores records in a persistent Docker volume | Listens on `3306` **inside the network only** (not published to the host) | `mysql:8.0`, volume `db_data:/var/lib/mysql`, `healthcheck` via `mysqladmin ping` |
+
+Supporting definitions: network `laravel_net` (bridge) isolates the three containers from other Docker projects; named volume `db_data` holds MySQL files so records survive container replacement; the only published port is `127.0.0.1:8080`.
+
+### Environment Configuration (placeholders only)
+
+The committed template is **`.env.container.example`**. It contains variable names and placeholder values only:
+
+```env
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8080
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=laravel_request_container_db
+DB_USERNAME=container_user
+DB_PASSWORD=
+```
+
+To configure a local environment, copy it and fill in real values **outside** of Git:
+
+```bash
+copy .env.container.example .env.container
+```
+
+`.env.container` is listed in `.gitignore` and is never committed. `APP_KEY` is generated **once** for this environment and stays consistent across container replacements, so sessions and encrypted data remain valid after `--force-recreate`.
+
+### Build and Startup Commands
+
+```bash
+docker compose config --quiet     # validate the configuration (no output = valid)
+docker compose up -d --build      # build the image and start all services
+docker compose ps                 # verify every service is running
+```
+
+### Migration Commands (inside the container)
+
+Run these only after `docker compose ps` reports the database as `healthy`:
+
+```bash
+docker compose exec app php artisan migrate
+docker compose exec app php artisan migrate:status
+```
+
+`migrate:fresh` and `migrate:reset` are **not** used — they would delete existing records. The original XAMPP database `laravel_request_system_db` is left untouched; containers use the separate `laravel_request_container_db`.
+
+### Health-Check Instructions
+
+The `db` service declares a readiness check, and `app` waits on it through `depends_on: condition: service_healthy`. Laravel therefore starts only after MySQL answers queries, not merely after the container process begins.
+
+```yaml
+healthcheck:
+  test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 60s
+```
+
+Verification:
+
+```bash
+docker compose ps                  # STATUS shows: Up X minutes (healthy)
+docker compose exec app id         # uid=1000(laravel) — application is non-root
+```
+
+### Persistence Testing
+
+`db_data` is a named volume owned by the `db` service. Replacing or recreating the `app` container does not touch it, so records remain.
+
+```bash
+docker compose ps -q app                          # capture app container ID (before)
+# create the request record CONTAINER-PERSIST-01 and note its request ID
+docker compose up -d --force-recreate --no-deps app
+docker compose restart web
+docker compose ps -q app                          # capture app container ID (after)
+# reload http://127.0.0.1:8080 — the same record must still be listed
+```
+
+| Check | Before | After | Result |
+| :--- | :--- | :--- | :--- |
+| App container ID (`docker compose ps -q app`) | *(record it)* | *(record it — must differ)* | Container replaced |
+| Request ID of `CONTAINER-PERSIST-01` | *(record it)* | *(identical)* | Data persisted |
+| Request details (item, quantity, status) | *(record them)* | *(identical)* | Data persisted |
+
+Second test — stop and restart the whole environment (records must survive):
+
+```bash
+docker compose down
+docker compose up -d
+# confirm the same request is still listed
+```
+
+> **Never run `docker compose down -v`, and never delete `db_data`.** A persistent volume protects against container replacement only; it is **not** a database backup — it has no point-in-time recovery, no replication, and deleting the volume destroys every record permanently.
+
+### Reproduction Procedure (reviewer)
+
+1. Clone the repository into a **clean** directory and check out the reviewed commit of `feature/lab4-containers`.
+2. `copy .env.container.example .env.container`, then fill in the locally shared runtime values (provided privately, never committed).
+3. Use an isolated Compose project name and a different free port, for example:
+
+   ```bash
+   set COMPOSE_PROJECT_NAME=request-repro
+   # change the web port mapping in compose.yaml to "127.0.0.1:8081:80"
+   ```
+
+4. `docker compose config --quiet && docker compose up -d --build && docker compose ps`
+5. `docker compose exec app php artisan migrate && docker compose exec app php artisan migrate:status`
+6. Open `http://127.0.0.1:8081` (or the chosen port) and verify login, student ownership rules, and administrator status updates.
+7. Confirm the reproduced stack created its **own** database volume with `docker volume ls`.
+
+### Why Credentials Must Not Be Stored Inside Docker Images
+
+- **Images are copied, not controlled.** Anyone with the image can run `docker history` or `docker save` and read every `ENV`, `ARG`, and `COPY` layer — including `.env` files accidentally added to the build context.
+- **Images are shared.** A pushed image is downloadable by anyone with registry access, and by teammates, CI runners, and future developers indefinitely.
+- **Secrets outlive the image.** Rotating a leaked password requires rebuilding and redeploying every image built from it, because the value is baked into a layer.
+- **Layer caching keeps deleted files.** Removing a secret from a later `RUN` step does not remove it from earlier layers.
+
+For those reasons the project keeps real values in `.env.container` (git-ignored, mounted/excluded at runtime), commits only the placeholder template `.env.container.example`, and excludes environment files through `.dockerignore`.
+
+---
 
 ## Technologies Used
 

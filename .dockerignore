@@ -1,0 +1,32 @@
+# Version control
+.git
+.github
+
+# Real environment files and secrets - never in the image
+.env
+.env.container
+.env.local
+.env.backup
+.env.production
+*.key
+auth.json
+
+# Host dependencies - installed inside the image instead
+node_modules
+vendor
+
+# Logs and runtime data
+storage/logs
+storage/framework/sessions
+storage/framework/cache
+*.log
+*.bak
+
+# Archives and database exports
+*.zip
+*.sql
+
+# Lab documents and submission artifacts
+*.pdf
+*.docx
+screenshots
