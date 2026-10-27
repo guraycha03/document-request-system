@@ -9,26 +9,24 @@ Laboratory 4 — RUN LARAVEL IN A REPRODUCIBLE CONTAINER ENVIRONMENT
 
 ---
 
-## Laboratory 3 Documentation
+## Laboratory 4 Documentation
 
-**[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx — Download](https://github.com/guraycha03/document-request-system/raw/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)**
+**[Germina_Samantha_Bianca_Guray_Charisse_Lab4.docx — Download](https://github.com/guraycha03/document-request-system/raw/main/Germina_Samantha_Bianca_Guray_Charisse_Lab4.docx)**
 
-**Copy stored in this repository:**
-[Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx](./Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx)
-— on the file page, click **Download raw file**
 
-**External copy:** [Open the Laboratory 3 report in Google Docs](https://docs.google.com/document/d/1_eXyKYUQcL4RLG5xBM083O3a8d5Ah6L5/edit?usp=drive_link)
+**External copy:** 
 
-The completed Laboratory 3 Word document submitted for this pair.
+The completed Laboratory 3 & 4 Word document.
 
-Direct file link:
-`https://github.com/guraycha03/document-request-system/blob/main/Germina_Samantha_Bianca_Guray_Charisse_Lab3.docx`
+[Open the Laboratory 3 docx file in Google Docs](https://docs.google.com/document/d/1_eXyKYUQcL4RLG5xBM083O3a8d5Ah6L5/edit?usp=sharing&ouid=117313599197372143557&rtpof=true&sd=true)
+
+[Open the Laboratory 4 docx file in Google Docs](https://docs.google.com/document/d/1wzKMWB86FFJDXnh6es2O_Q_m0NkX9ZmN/edit?usp=sharing&ouid=117313599197372143557&rtpof=true&sd=true)
 
 ---
 
 ## Screenshots
 
-![Document Request and Generation System](screenshots/system-ui.png)
+![Document Request and Generation System](screenshots/lab-04.png)
 
 
 ## Student Information
